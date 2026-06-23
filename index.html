@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRISTOLAB 2.0 | Laboratorio Virtual</title>
+    <style>
+        /* ==========================================================================
+           VARIABLES Y CONFIGURACIÓN GENERAL (DISEÑO INDUSTRIAL NEÓN)
+           ========================================================================== */
+        :root {
+            --bg-dark: #0b0f19;       /* Fondo oscuro profundo */
+            --bg-card: #161f30;       /* Fondo de contenedores y paneles */
+            --text-main: #f8fafc;     /* Texto principal claro */
+            --text-muted: #94a3b8;    /* Texto secundario grisáceo */
+            --neon-blue: #00d2ff;     /* Azul neón suave para acentos */
+            --neon-glow: 0 0 12px rgba(0, 210, 255, 0.4);
+            --neon-green: #00f5d4;    /* Verde neón para estados normales */
+            --alert-red: #ff3860;     /* Rojo para alarmas críticas */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* ==========================================================================
+           BARRA DE NAVEGACIÓN (INSPIRADA EN INTERFACES DE SOFTWARE)
+           ========================================================================== */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 40px;
+            background-color: var(--bg-card);
+            border-bottom: 2px solid var(--neon-blue);
+            box-shadow: var(--neon-glow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .logo .version {
+            color: var(--neon-blue);
+            text-shadow: var(--neon-glow);
+        }
+
+        nav .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+        }
+
+        nav .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        nav .nav-links a:hover, nav .nav-links a.active-tab {
+            color: var(--text-main);
+            background-color: rgba(0, 210, 255, 0.1);
+            border: 1px solid var(--neon-blue);
+            box-shadow: var(--neon-glow);
+        }
+
+        /* ==========================================================================
+           CONTENEDOR PRINCIPAL Y ENRUTADOR DE SECCIONES
+           ========================================================================== */
+        main {
+            flex: 1;
+            padding: 40px;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .content-section {
+            display: none; /* Oculto por defecto */
+            animation: containerFade 0.4s ease-in-out forwards;
+        }
+
+        .content-section.active {
+            display: block; /* Visible cuando está activo */
+        }
+
+        @keyframes containerFade {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ==========================================================================
+           SECCIÓN: INICIO (HERO SECTION)
+           ========================================================================== */
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .hero-text h1 {
+            font-size: 3.2rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+
+        .hero-text h1 span {
+            color: var(--neon-blue);
+            text-shadow: var(--neon-glow);
+        }
+
+        .hero-text p {
+            color: var(--text-muted);
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .hero-image {
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-image img {
+            width: 100%;
+            max-width: 550px;
+            height: 380px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid var(--neon-blue);
+            box-shadow: var(--neon-glow);
+        }
+
+        /* ==========================================================================
+           SECCIÓN: INFORMACIÓN GENERAL
+           ========================================================================== */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .info-card {
+            background-color: var(--bg-card);
+            padding: 30px;
+            border-radius: 10px;
+            border-top: 4px solid var(--neon-blue);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .info-card h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--neon-blue);
+        }
+
+        .info-card p {
+            color: var(--text-muted);
+            line-height: 1.5;
+            font-size: 15px;
+        }
+
+        /* ==========================================================================
+           SECCIÓN: LABORATORIO DE DIAGNÓSTICO (GEARBOX 2)
+           ========================================================================== */
+        .lab-layout {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        /* Panel de Control de Telemetría */
+        .telemetry-panel {
+            background-color: var(--bg-card);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--neon-green);
+            box-shadow: 0 0 8px var(--neon-green);
+            display: inline-block;
+        }
+
+        .status-indicator.critical {
+            background-color: var(--alert-red);
+            box-shadow: 0 0 8px var(--alert-red);
+        }
+
+        .data-list {
+            list-style: none;
+        }
+
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px dashed rgba(255,255,255,0.05);
+            font-size: 14px;
+        }
+
+        .data-item span:first-child {
+            color: var(--text-muted);
+        }
+
+        .data-item span:last-child {
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .value-alert {
+            color: var(--alert-red);
+        }
+
+        /* Botón Neón */
+        .btn-action {
+            background: transparent;
+            color: var(--neon-blue);
+            border: 2px solid var(--neon-blue);
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            margin-top: auto;
+            text-align: center;
+        }
+
+        .btn-action:hover {
+            background-color: var(--neon-blue);
+            color: var(--bg-dark);
+            box-shadow: var(--neon-glow);
+        }
+
+        /* Visor Central (Espacio 3D) */
+        .workspace-viewer {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .screen-3d {
+            background-color: #050811;
+            border: 2px solid #1e293b;
+            border-radius: 12px;
+            height: 450px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Rejilla técnica de fondo de ingeniería */
+        .screen-3d::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 210, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 210, 255, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+        }
+
+        .placeholder-3d-graphic {
+            text-align: center;
+            z-index: 2;
+        }
+
+        .gearbox-svg {
+            width: 120px;
+            height: 120px;
+            fill: none;
+            stroke: var(--neon-blue);
+            stroke-width: 1.5;
+            margin-bottom: 15px;
+            filter: drop-shadow(var(--neon-glow));
+        }
+
+        .rotating {
+            animation: gearRotate 8s linear infinite;
+        }
+
+        @keyframes gearRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .console-log {
+            background-color: #020617;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 13px;
+            color: var(--neon-green);
+            height: 100px;
+            overflow-y: auto;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Barra de progreso de escaneo simulado */
+        .progress-bar-container {
+            width: 100%;
+            background-color: #1e293b;
+            height: 6px;
+            border-radius: 3px;
+            margin-top: 10px;
+            display: none;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--neon-blue);
+            width: 0%;
+            box-shadow: var(--neon-glow);
+            transition: width 0.1s linear;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">CRISTOLAB <span class="version">2.0</span></div>
+        <nav>
+            <ul class="nav-links">
+                <li><a id="tab-inicio" class="active-tab" onclick="switchTab('inicio')">Inicio</a></li>
+                <li><a id="tab-informacion" onclick="switchTab('informacion')">Información</a></li>
+                <li><a id="tab-laboratorio" onclick="switchTab('laboratorio')">Laboratorio 3D</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        
+        <section id="section-inicio" class="content-section active">
+            <div class="hero">
+                <div class="hero-text">
+                    <h1>Mantenimiento Industrial <br><span>Virtualizado</span></h1>
+                    <p>Experimenta con entornos operativos complejos de manera segura. CRISTOLAB 2.0 permite el análisis predictivo de fallas estructurales y mecánicas sin poner en riesgo activos físicos reales.</p>
+                    <button class="btn-action" style="width: auto; padding: 14px 28px;" onclick="switchTab('laboratorio')">Ingresar al Laboratorio</button>
+                </div>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80" alt="Mantenimiento Industrial Avanzado">
+                </div>
+            </div>
+        </section>
+
+        <section id="section-informacion" class="content-section">
+            <h2 style="font-size: 28px; margin-bottom: 10px;">Información Técnica General</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">Especificaciones de los módulos formativos incluidos en la plataforma de simulación.</p>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>Análisis Vibracional</h3>
+                    <p>Monitoreo de severidad global según normativas internacionales ISO 10816 para la detección temprana de desalineación, desbalance y holguras mecánicas.</p>
+                </div>
+                <div class="info-card">
+                    <h3>Tribología y Lubricación</h3>
+                    <p>Estudio virtual de la degradación del lubricante en reductores de velocidad, análisis de partículas de desgaste y control de temperatura crítica.</p>
+                </div>
+                <div class="info-card">
+                    <h3>Componentes Interactivos</h3>
+                    <p>Modelado geométrico y análisis cinemático de trenes de engranajes epicicloidales y helicoidales bajo condiciones variables de torque.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-laboratorio" class="content-section">
+            <h2 style="font-size: 28px; margin-bottom: 5px;">Módulo de Diagnóstico: Gearbox 2</h2>
+            <p style="color: var(--text-muted); margin-bottom: 25px;">Monitoreo analítico de caja reductora industrial de doble etapa (Caso Maestro).</p>
+            
+            <div class="lab-layout">
+                
+                <div class="telemetry-panel">
+                    <div class="panel-title">
+                        <span>Telemetría Remota</span>
+                        <span id="sys-status" class="status-indicator"></span>
+                    </div>
+                    
+                    <div class="data-list">
+                        <div class="data-item">
+                            <span>ID de Activo:</span>
+                            <span>GBX-002-MH</span>
+                        </div>
+                        <div class="data-item">
+                            <span>Velocidad Entrada:</span>
+                            <span id="val-rpm">1450 RPM</span>
+                        </div>
+                        <div class="data-item">
+                            <span>Temperatura Aceite:</span>
+                            <span id="val-temp" class="value-alert">85.4 °C</span>
+                        </div>
+                        <div class="data-item">
+                            <span>Vibración global:</span>
+                            <span id="val-vib">4.2 mm/s</span>
+                        </div>
+                        <div class="data-item">
+                            <span>Frecuencia de Engrane:</span>
+                            <span>241.6 Hz</span>
+                        </div>
+                    </div>
+
+                    <button id="btn-scan" class="btn-action" onclick="runDiagnosticSequence()">Iniciar Análisis Dinámico</button>
+                    
+                    <div class="progress-bar-container" id="progress-container">
+                        <div class="progress-bar-fill" id="progress-fill"></div>
+                    </div>
+                </div>
+
+                <div class="workspace-viewer">
+                    <div class="screen-3d">
+                        <div class="placeholder-3d-graphic">
+                            <svg class="gearbox-svg rotating" id="gear-mesh" viewBox="0 0 24 24">
+                                <path d="M19.44 12.99l-.01-.02c.04-.33.08-.67.08-1.01 0-.34-.03-.66-.07-.99l.01-.02 2.44-1.92-2.43-4.22-2.87 1.16-.01-.01c-.52-.4-1.09-.73-1.71-.97l-.01-.01L14.4 2H9.55l-.46 3.01-.01.01c-.62.24-1.19.57-1.71.97l-.01.01-2.86-1.16-2.44 4.22 2.44 1.92.01.02c-.04.33-.07.65-.07.99 0 .34.03.68.08 1.01l-.01.02-2.44 1.92 2.44 4.22 2.87-1.16.01.01c.52.4 1.09.73 1.71.97l.01.01L9.54 22h4.86l.46-3.01.01-.01c.62-.24 1.19-.57 1.71-.97l.01-.01 2.86 1.16 2.44-4.22-2.45-1.92zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+                            </svg>
+                            <h4 id="viewer-title" style="letter-spacing: 1px; font-weight: 600;">VISOR VIRTUAL: ENTORNO ACTIVO</h4>
+                            <p id="viewer-subtitle" style="color: var(--text-muted); font-size: 13px; margin-top: 5px;">Geometría CAD cargada correctamente. Sistema listo.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="console-log" id="console-output">
+                        CRISTOLAB OS [Versión 2.0.4] <br>
+                        &gt; Sistema inicializado. Monitoreando Gearbox 2 (Reductor de velocidad)...<br>
+                        &gt; ADVERTENCIA: Umbral de temperatura sobrepasado en rodamiento de salida.
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        /**
+         * 1. MANEJO DE PESTAÑAS (RUTAS NATIVAS)
+         * Oculta o muestra secciones de la página dinámicamente.
+         */
+        function switchTab(targetSectionId) {
+            // Remover estado activo de todos los enlaces de la navegación
+            const navLinks = document.querySelectorAll('.nav-links a');
+            navLinks.forEach(link => link.classList.remove('active-tab'));
+
+            // Ocultar todas las secciones del cuerpo principal
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            // Activar la pestaña y sección seleccionada
+            document.getElementById(`tab-${targetSectionId}`).classList.add('active-tab');
+            document.getElementById(`section-${targetSectionId}`).classList.add('active');
+        }
+
+        /**
+         * 2. SECUENCIA DE DIAGNÓSTICO INTERACTIVO (SIMULADOR)
+         * Modifica datos mecánicos en tiempo real simulando adquisición de datos por sensores.
+         */
+        function runDiagnosticSequence() {
+            const btn = document.getElementById('btn-scan');
+            const progressContainer = document.getElementById('progress-container');
+            const progressFill = document.getElementById('progress-fill');
+            const consoleBox = document.getElementById('console-output');
+            const gearMesh = document.getElementById('gear-mesh');
+
+            // Deshabilitar botón durante el proceso de escaneo técnico
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+            progressContainer.style.display = 'block';
+            
+            // Actualizar consola técnica
+            consoleBox.innerHTML += `<br>&gt; Iniciando análisis de espectro de frecuencia...`;
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+
+            // Forzar velocidad de rotación visual del engranaje CAD
+            gearMesh.style.animationDuration = '1.5s';
+
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    
+                    // Finalización del proceso de simulación
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    progressContainer.style.display = 'none';
+                    progressFill.style.width = '0%';
+                    
+                    // Restaurar velocidad de animación normal del componente mecánico
+                    gearMesh.style.animationDuration = '8s';
+
+                    // Modificar los datos reales del Gearbox tras reparación simulada
+                    executeSimulationFix();
+                } else {
+                    width += 2;
+                    progressFill.style.width = width + '%';
+                }
+            }, 50);
+        }
+
+        /**
+         * 3. ACTUALIZACIÓN DINÁMICA DE LA TELEMETRÍA DEL CASO MAESTRO
+         */
+        function executeSimulationFix() {
+            const consoleBox = document.getElementById('console-output');
+            
+            // Actualizar etiquetas numéricas del panel
+            document.getElementById('val-temp').innerHTML = "54.2 °C";
+            document.getElementById('val-temp').className = ""; // Retirar alerta visual
+            document.getElementById('val-vib').innerHTML = "1.8 mm/s";
+            document.getElementById('sys-status').className = "status-indicator"; // Verde normal
+            
+            document.getElementById('viewer-title').innerHTML = "DIAGNÓSTICO COMPLETADO: OPERACIÓN OPTIMIZADA";
+            document.getElementById('viewer-subtitle').innerHTML = "Análisis térmico y vibratorio dentro de los límites estables de diseño (ISO 10816).";
+
+            consoleBox.innerHTML += `<br>&gt; Escaneo completado. Óptimo engranamiento detectado.`;
+            consoleBox.innerHTML += `<br>&gt; Filtro cinemático aplicado con éxito. Temperatura normalizada.`;
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
