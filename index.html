@@ -10,9 +10,20 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --cyan: #00C2FF; --cyan2: #00E5FF; --teal: #00FFD1;
-      --dark: #060D1F; --dark2: #0D1A35; --card: #0D1A35;
-      --border: #1A3A6A; --text: #C8E6FF; --muted: #5A8AB0;
+     /* Tonos Azules Neón Principales */
+      --cyan: #00F0FF;     /* Azul neón brillante (Primario) */
+      --cyan2: #0088FF;    /* Azul eléctrico intenso (Hover y botones) */
+      --teal: #00FFFF;     /* Cian puro (Acentos y luces) */
+      
+      /* Fondos Oscuros Profundos (Para que el neón brille) */
+      --dark: #030712;     /* Fondo principal (Casi negro profundo) */
+      --dark2: #0B1426;    /* Fondo secundario (Azul noche oscuro) */
+      --card: #0A1222;     /* Fondo de las tarjetas y contenedores */
+      
+      /* Bordes y Textos */
+      --border: #1E3A8A;   /* Borde azul vibrante pero oscuro */
+      --text: #E0F2FE;     /* Texto principal (Blanco azulado) */
+      --muted: #60A5FA;    /* Texto secundario (Azul claro suave) */
     }
     html { scroll-behavior: smooth; }
     body { font-family: 'Inter', sans-serif; background: var(--dark); color: var(--text); min-height: 100vh; overflow-x: hidden; }
