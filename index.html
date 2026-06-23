@@ -820,6 +820,35 @@
       if (!w || !h) return;
       ctx.clearRect(0, 0, w, h);
       const m = currentMetal;
+      // ===== 1. DEFINIR PROPORCIONES DINÁMICAS PARA LA GEARBOX =====
+        let dx = 1.0, dy = 1.0, dz = 1.0; // Tamaños por defecto (Cubo)
+
+        if (m.id === 'lss') {
+            // Eje de Baja Velocidad (LSS): Un eje cilíndrico/prisma robusto y alargado
+            dx = 0.6; dy = 2.2; dz = 0.6;
+        } else if (m.id === 'planetaria') {
+            // Etapa Planetaria: Un disco plano y muy ancho (asemeja la corona)
+            dx = 1.9; dy = 0.3; dz = 1.9;
+        } else if (m.id === 'hss') {
+            // Eje de Alta Velocidad (HSS): Un eje muy delgado y de largo alcance
+            dx = 0.2; dy = 2.6; dz = 0.2;
+        } else if (m.id === 'lubricacion') {
+            // Sistema de Lubricación: Una caja/tanque de distribución compacta
+            dx = 1.2; dy = 0.9; dz = 1.4;
+        }
+
+        // ===== 2. REMPLAZAR TUS VERTICES VIEJOS POR ESTOS DINÁMICOS =====
+        // (Busca dónde tenías el arreglo original de números fijos y cámbialo por este)
+        const vertices = [
+            {x: -dx, y: -dy, z: -dz},
+            {x:  dx, y: -dy, z: -dz},
+            {x:  dx, y:  dy, z: -dz},
+            {x: -dx, y:  dy, z: -dz},
+            {x: -dx, y: -dy, z:  dz},
+            {x:  dx, y: -dy, z:  dz},
+            {x:  dx, y:  dy, z:  dz},
+            {x: -dx, y:  dy, z:  dz}
+        ];
       const R = m.color[0], G = m.color[1], B = m.color[2];
       const light = { x: 0.58, y: -0.78, z: 0.58 };
       const lLen = Math.sqrt(light.x**2 + light.y**2 + light.z**2);
