@@ -247,6 +247,68 @@
       .hero-stats { gap: 1.2rem; }
       .section-content { padding: 1.5rem 1rem; }
     }
+    /* ==========================================
+       EFECTOS DE NEÓN BRILLANTE (CRISTOLAB 2.0)
+       ========================================== */
+
+    /* 1. Títulos principales con efecto "Tubo de Neón" */
+    .hero h1, .sec-title {
+      color: var(--text);
+      text-shadow: 
+        0 0 7px rgba(0, 240, 255, 0.3),
+        0 0 15px var(--cyan),
+        0 0 21px var(--cyan2);
+    }
+
+    /* Forzar que el texto destacado brille aún más */
+    .accent, .sec-tag {
+      color: var(--teal) !important;
+      text-shadow: 0 0 10px var(--teal), 0 0 20px var(--cyan2);
+    }
+
+    /* 2. Botones Radiactivos (Brillan intensamente al pasar el mouse) */
+    .res-btn, .form-send, .metal-btn.active {
+      background: rgba(0, 240, 255, 0.05) !important;
+      border: 2px solid var(--cyan) !important;
+      color: var(--cyan) !important;
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+      transition: all 0.3s ease-in-out !important;
+    }
+
+    .res-btn:hover, .form-send:hover, .metal-btn:hover {
+      background: var(--cyan) !important;
+      color: var(--dark) !important; /* El texto se vuelve oscuro para contrastar */
+      box-shadow: 
+        0 0 15px var(--cyan),
+        0 0 30px var(--cyan2),
+        0 0 50px rgba(0, 240, 255, 0.6) !important;
+      transform: translateY(-3px);
+    }
+
+    /* 3. El Visor 3D y las Tarjetas con "Aura" de fondo */
+    #canvasWrap, .res-card, .contact-form {
+      border: 1px solid rgba(0, 240, 255, 0.2) !important;
+      box-shadow: 
+        0 0 15px rgba(30, 58, 138, 0.4), 
+        inset 0 0 15px rgba(0, 240, 255, 0.05) !important;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    /* Cuando pases el mouse sobre una tarjeta, esta se ilumina */
+    .res-card:hover {
+      border-color: var(--cyan) !important;
+      box-shadow: 
+        0 0 20px rgba(0, 240, 255, 0.25),
+        inset 0 0 10px rgba(0, 240, 255, 0.05) !important;
+    }
+
+    /* 4. Barra de navegación superior fija con línea de neón inferior */
+    nav {
+      background: rgba(11, 20, 38, 0.8) !important; /* Transparencia fluida */
+      backdrop-filter: blur(12px); /* Efecto vidrio esmerilado */
+      border-bottom: 2px solid var(--cyan);
+      box-shadow: 0 4px 20px rgba(0, 240, 255, 0.15);
+    }
   </style>
 </head>
 <body>
