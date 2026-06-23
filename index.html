@@ -1,574 +1,790 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRISTOLAB 2.0 | Laboratorio Virtual</title>
-    <style>
-        /* ==========================================================================
-           VARIABLES Y CONFIGURACIÓN GENERAL (DISEÑO INDUSTRIAL NEÓN)
-           ========================================================================== */
-        :root {
-            --bg-dark: #0b0f19;       /* Fondo oscuro profundo */
-            --bg-card: #161f30;       /* Fondo de contenedores y paneles */
-            --text-main: #f8fafc;     /* Texto principal claro */
-            --text-muted: #94a3b8;    /* Texto secundario grisáceo */
-            --neon-blue: #00d2ff;     /* Azul neón suave para acentos */
-            --neon-glow: 0 0 12px rgba(0, 210, 255, 0.4);
-            --neon-green: #00f5d4;    /* Verde neón para estados normales */
-            --alert-red: #ff3860;     /* Rojo para alarmas críticas */
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRISTOLAB 2.0 — Laboratorio Virtual de Mantenimiento Industrial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cyan: #00C2FF; --cyan2: #00E5FF; --teal: #00FFD1;
+      --dark: #060D1F; --dark2: #0D1A35; --card: #0D1A35;
+      --border: #1A3A6A; --text: #C8E6FF; --muted: #5A8AB0;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--dark); color: var(--text); min-height: 100vh; overflow-x: hidden; }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-        }
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(6,13,31,0.97); border-bottom: 1px solid var(--border);
+      padding: 0 2rem; display: flex; align-items: center; justify-content: space-between;
+      height: 60px; backdrop-filter: blur(10px);
+    }
+    .logo { font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 900; color: var(--cyan); letter-spacing: 3px; }
+    .logo span { color: var(--teal); }
+    .logo small { font-size: 11px; font-weight: 400; color: var(--muted); margin-left: 6px; letter-spacing: 1px; }
+    .nav-links { display: flex; gap: 4px; }
+    .nav-btn {
+      background: none; border: none; color: var(--muted); font-size: 11px;
+      font-family: 'Inter', sans-serif; font-weight: 600; padding: 7px 14px;
+      border-radius: 7px; cursor: pointer; transition: all 0.2s;
+      letter-spacing: 0.8px; text-transform: uppercase;
+    }
+    .nav-btn:hover, .nav-btn.active { color: var(--cyan); background: rgba(0,194,255,0.1); }
+    .hamburger { display: none; background: none; border: none; color: var(--cyan); font-size: 24px; cursor: pointer; }
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-        }
+    /* SECTIONS */
+    .section { display: none; min-height: calc(100vh - 60px); }
+    .section.visible { display: block; }
+    .section-content { padding: 2.5rem 2rem; max-width: 1200px; margin: 0 auto; }
+    .sec-header { margin-bottom: 2rem; }
+    .sec-tag { font-size: 11px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 0.5rem; }
+    .sec-title { font-family: 'Orbitron', sans-serif; font-size: 26px; font-weight: 700; color: #fff; }
+    .sec-sub { font-size: 14px; color: var(--muted); margin-top: 0.5rem; max-width: 560px; line-height: 1.6; }
 
-        /* ==========================================================================
-           BARRA DE NAVEGACIÓN (INSPIRADA EN INTERFACES DE SOFTWARE)
-           ========================================================================== */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 18px 40px;
-            background-color: var(--bg-card);
-            border-bottom: 2px solid var(--neon-blue);
-            box-shadow: var(--neon-glow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+    /* HERO */
+    .hero {
+      position: relative; min-height: calc(100vh - 60px); display: flex;
+      align-items: center; overflow: hidden; padding: 3rem 2rem;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(0,194,255,0.06) 0%, transparent 60%),
+                  linear-gradient(135deg, #060D1F 0%, #0D1A35 50%, #091a3a 100%);
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(0,194,255,0.06) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0,194,255,0.06) 1px, transparent 1px);
+      background-size: 44px 44px;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 560px; }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,194,255,0.1); border: 1px solid rgba(0,194,255,0.3);
+      color: var(--cyan); font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; padding: 6px 16px; border-radius: 20px; margin-bottom: 1.5rem;
+    }
+    .hero h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(28px,5vw,48px); font-weight: 900; line-height: 1.08; margin-bottom: 1.2rem; color: #fff; }
+    .hero h1 .accent { color: var(--cyan); }
+    .hero p { font-size: 15px; line-height: 1.7; color: var(--muted); margin-bottom: 2rem; }
+    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2.5rem; }
+    .btn-primary {
+      background: var(--cyan); color: #060D1F; font-weight: 800; font-size: 13px;
+      padding: 14px 32px; border-radius: 9px; border: none; cursor: pointer;
+      font-family: 'Orbitron', sans-serif; letter-spacing: 1px; transition: all 0.2s;
+    }
+    .btn-primary:hover { background: var(--cyan2); transform: translateY(-2px); }
+    .btn-secondary {
+      background: rgba(0,194,255,0.08); color: var(--cyan); font-weight: 600; font-size: 13px;
+      padding: 13px 26px; border-radius: 9px; border: 1px solid rgba(0,194,255,0.3);
+      cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(0,194,255,0.18); }
+    .hero-stats { display: flex; gap: 2rem; }
+    .stat-num { font-family: 'Orbitron', sans-serif; font-size: 26px; font-weight: 700; color: var(--cyan); }
+    .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 2px; }
+    .stat-divider { width: 1px; background: var(--border); }
+    .hero-visual {
+      position: absolute; right: 4%; top: 50%; transform: translateY(-50%);
+      width: min(320px, 38vw); height: min(320px, 38vw); pointer-events: none;
+    }
+    .gear-svg { width: 100%; height: 100%; }
+    .hero-modules { background: var(--dark2); border-top: 1px solid var(--border); padding: 2rem; }
 
-        .logo {
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
+    /* CARDS */
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px,1fr)); gap: 16px; margin-bottom: 2rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.4rem; transition: all 0.25s; cursor: pointer; }
+    .card:hover { border-color: var(--cyan); transform: translateY(-3px); }
+    .card-icon { width: 44px; height: 44px; border-radius: 10px; background: rgba(0,194,255,0.1); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+    .card-icon i { font-size: 22px; color: var(--cyan); }
+    .card h3 { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 0.5rem; }
+    .card p { font-size: 12px; color: var(--muted); line-height: 1.6; }
+    .badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 11px; border-radius: 20px; margin-top: 0.8rem; letter-spacing: 0.5px; }
+    .badge-cyan { background: rgba(0,194,255,0.1); color: var(--cyan); border: 1px solid rgba(0,194,255,0.2); }
+    .badge-teal { background: rgba(0,255,209,0.08); color: var(--teal); border: 1px solid rgba(0,255,209,0.2); }
 
-        .logo .version {
-            color: var(--neon-blue);
-            text-shadow: var(--neon-glow);
-        }
+    /* INFO */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1.2rem; }
+    .info-block { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.4rem; margin-bottom: 1.2rem; }
+    .info-block h3 { font-size: 14px; font-weight: 700; color: var(--cyan); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 8px; }
+    .info-block p { font-size: 13px; color: var(--muted); line-height: 1.7; }
+    .maint-types { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 1rem; }
+    .mtype { background: #060D1F; border: 1px solid var(--border); border-radius: 10px; padding: 1rem; }
+    .mtype-label { font-size: 12px; font-weight: 700; margin-bottom: 0.5rem; }
+    .mtype p { font-size: 11px; color: var(--muted); line-height: 1.5; }
+    .steps { display: flex; flex-direction: column; gap: 12px; margin-top: 1rem; }
+    .step { display: flex; gap: 14px; align-items: flex-start; }
+    .step-num {
+      min-width: 26px; height: 26px; background: rgba(0,194,255,0.12);
+      border: 1px solid rgba(0,194,255,0.3); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; color: var(--cyan); flex-shrink: 0; margin-top: 2px;
+    }
+    .step-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+    .step-text strong { color: #fff; display: block; margin-bottom: 3px; font-size: 14px; }
 
-        nav .nav-links {
-            list-style: none;
-            display: flex;
-            gap: 25px;
-        }
+    /* LAB */
+    .metal-selector { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.4rem; }
+    .metal-btn {
+      background: rgba(0,194,255,0.06); border: 1px solid var(--border);
+      color: var(--muted); font-size: 11px; font-weight: 600; padding: 7px 16px;
+      border-radius: 20px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;
+    }
+    .metal-btn:hover, .metal-btn.active { background: rgba(0,194,255,0.15); border-color: var(--cyan); color: var(--cyan); }
+    .lab-container { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 2rem; }
+    .metal-viewer { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.4rem; }
+    .metal-viewer h3 { font-size: 13px; font-weight: 700; color: var(--cyan); margin-bottom: 1rem; font-family: 'Orbitron', sans-serif; }
+    .canvas-wrap { position: relative; height: 240px; border-radius: 10px; overflow: hidden; background: #060D1F; border: 1px solid var(--border); cursor: grab; }
+    .canvas-wrap:active { cursor: grabbing; }
+    #metalCanvas { width: 100%; height: 100%; display: block; }
+    .canvas-hint { margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .canvas-hint span { font-size: 10px; color: var(--muted); }
+    #rotLabel { font-size: 10px; color: var(--cyan); }
+    .metal-name { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .metal-symbol { font-family: 'Orbitron', sans-serif; font-size: 12px; color: var(--teal); margin-bottom: 0.6rem; }
+    .metal-desc { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 1rem; }
+    .prop-row { display: flex; justify-content: space-between; font-size: 12px; padding: 5px 0; border-bottom: 1px solid rgba(26,58,106,0.4); }
+    .prop-row:last-child { border-bottom: none; }
+    .prop-row span:first-child { color: var(--muted); }
+    .prop-row span:last-child { color: var(--cyan); font-weight: 600; }
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 12px; }
+    .tool-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.2s; }
+    .tool-card:hover { border-color: var(--teal); transform: translateY(-2px); }
+    .tool-emoji { font-size: 30px; margin-bottom: 0.5rem; }
+    .tool-name { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 3px; }
+    .tool-use { font-size: 11px; color: var(--muted); }
 
-        nav .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 15px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 8px 16px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
+    /* PROCEDIMIENTOS */
+    .proc-list { display: flex; flex-direction: column; gap: 14px; }
+    .proc-item { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.4rem; display: flex; gap: 1.2rem; align-items: flex-start; transition: all 0.2s; }
+    .proc-item:hover { border-color: var(--cyan); }
+    .proc-num { font-family: 'Orbitron', sans-serif; font-size: 26px; font-weight: 700; color: rgba(0,194,255,0.2); min-width: 44px; flex-shrink: 0; }
+    .proc-body h4 { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 0.4rem; }
+    .proc-body p { font-size: 12px; color: var(--muted); line-height: 1.6; }
+    .proc-tags { display: flex; gap: 6px; margin-top: 0.8rem; flex-wrap: wrap; }
+    .proc-tag { font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 12px; background: rgba(0,194,255,0.07); color: var(--cyan); border: 1px solid rgba(0,194,255,0.15); }
 
-        nav .nav-links a:hover, nav .nav-links a.active-tab {
-            color: var(--text-main);
-            background-color: rgba(0, 210, 255, 0.1);
-            border: 1px solid var(--neon-blue);
-            box-shadow: var(--neon-glow);
-        }
+    /* RECURSOS */
+    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 16px; }
+    .res-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.4rem; transition: all 0.2s; }
+    .res-card:hover { border-color: var(--teal); }
+    .res-type { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.6rem; }
+    .res-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 0.4rem; }
+    .res-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    .res-btn { margin-top: 1rem; width: 100%; background: rgba(0,194,255,0.08); border: 1px solid rgba(0,194,255,0.2); color: var(--cyan); font-size: 12px; font-weight: 700; padding: 9px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+    .res-btn:hover { background: rgba(0,194,255,0.18); }
 
-        /* ==========================================================================
-           CONTENEDOR PRINCIPAL Y ENRUTADOR DE SECCIONES
-           ========================================================================== */
-        main {
-            flex: 1;
-            padding: 40px;
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
-        }
+    /* CONTACTO */
+    .contact-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .contact-info { display: flex; flex-direction: column; gap: 12px; }
+    .c-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; display: flex; gap: 14px; align-items: center; }
+    .c-icon { width: 40px; height: 40px; background: rgba(0,194,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .c-icon i { font-size: 20px; color: var(--cyan); }
+    .c-text h4 { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+    .c-text p { font-size: 12px; color: var(--muted); }
+    .contact-form { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.6rem; }
+    .contact-form h3 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 1.4rem; font-family: 'Orbitron', sans-serif; }
+    .form-field { margin-bottom: 1rem; }
+    .form-field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; }
+    .form-field input, .form-field textarea, .form-field select {
+      width: 100%; background: #060D1F; border: 1px solid var(--border); color: #fff;
+      font-size: 13px; padding: 10px 14px; border-radius: 8px;
+      font-family: 'Inter', sans-serif; outline: none; transition: border 0.2s;
+    }
+    .form-field input:focus, .form-field textarea:focus, .form-field select:focus { border-color: var(--cyan); }
+    .form-field select option { background: #0D1A35; }
+    .form-field textarea { height: 90px; resize: none; }
+    .form-send { width: 100%; background: var(--cyan); color: #060D1F; font-weight: 800; font-size: 13px; padding: 12px; border-radius: 9px; border: none; cursor: pointer; font-family: 'Orbitron', sans-serif; letter-spacing: 1.5px; margin-top: 0.4rem; transition: all 0.2s; }
+    .form-send:hover { background: var(--cyan2); transform: translateY(-1px); }
+    .lab-note { background: rgba(0,194,255,0.05); border: 1px solid rgba(0,194,255,0.15); border-radius: 10px; padding: 1rem; }
+    .lab-note-title { font-size: 13px; font-weight: 700; color: var(--cyan); margin-bottom: 0.4rem; }
+    .lab-note-text { font-size: 12px; color: var(--muted); line-height: 1.5; }
 
-        .content-section {
-            display: none; /* Oculto por defecto */
-            animation: containerFade 0.4s ease-in-out forwards;
-        }
+    /* FOOTER */
+    footer { background: var(--dark2); border-top: 1px solid var(--border); padding: 1.4rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    .footer-logo { font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 700; color: var(--cyan); }
+    .footer-text, .footer-ver { font-size: 11px; color: var(--muted); }
 
-        .content-section.active {
-            display: block; /* Visible cuando está activo */
-        }
+    /* ANIMATIONS */
+    @keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes rotateSlowRev { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+    @keyframes pulseDot { 0%,100% { opacity:0.4; } 50% { opacity:1; } }
+    .gear-ring-anim { animation: rotateSlow 14s linear infinite; transform-origin: 140px 140px; }
+    .gear-ring-anim2 { animation: rotateSlowRev 9s linear infinite; transform-origin: 140px 140px; }
+    .dp1 { animation: pulseDot 2s ease-in-out infinite; }
+    .dp2 { animation: pulseDot 2.8s ease-in-out infinite 0.6s; }
+    .dp3 { animation: pulseDot 3.4s ease-in-out infinite 1.2s; }
 
-        @keyframes containerFade {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ==========================================================================
-           SECCIÓN: INICIO (HERO SECTION)
-           ========================================================================== */
-        .hero {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        .hero-text h1 {
-            font-size: 3.2rem;
-            line-height: 1.1;
-            margin-bottom: 20px;
-            font-weight: 800;
-        }
-
-        .hero-text h1 span {
-            color: var(--neon-blue);
-            text-shadow: var(--neon-glow);
-        }
-
-        .hero-text p {
-            color: var(--text-muted);
-            font-size: 18px;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
-        .hero-image {
-            position: relative;
-            display: flex;
-            justify-content: center;
-        }
-
-        .hero-image img {
-            width: 100%;
-            max-width: 550px;
-            height: 380px;
-            object-fit: cover;
-            border-radius: 12px;
-            border: 2px solid var(--neon-blue);
-            box-shadow: var(--neon-glow);
-        }
-
-        /* ==========================================================================
-           SECCIÓN: INFORMACIÓN GENERAL
-           ========================================================================== */
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
-        }
-
-        .info-card {
-            background-color: var(--bg-card);
-            padding: 30px;
-            border-radius: 10px;
-            border-top: 4px solid var(--neon-blue);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        }
-
-        .info-card h3 {
-            font-size: 20px;
-            margin-bottom: 15px;
-            color: var(--neon-blue);
-        }
-
-        .info-card p {
-            color: var(--text-muted);
-            line-height: 1.5;
-            font-size: 15px;
-        }
-
-        /* ==========================================================================
-           SECCIÓN: LABORATORIO DE DIAGNÓSTICO (GEARBOX 2)
-           ========================================================================== */
-        .lab-layout {
-            display: grid;
-            grid-template-columns: 380px 1fr;
-            gap: 30px;
-            margin-top: 20px;
-        }
-
-        /* Panel de Control de Telemetría */
-        .telemetry-panel {
-            background-color: var(--bg-card);
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .panel-title {
-            font-size: 18px;
-            font-weight: 700;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: var(--neon-green);
-            box-shadow: 0 0 8px var(--neon-green);
-            display: inline-block;
-        }
-
-        .status-indicator.critical {
-            background-color: var(--alert-red);
-            box-shadow: 0 0 8px var(--alert-red);
-        }
-
-        .data-list {
-            list-style: none;
-        }
-
-        .data-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px dashed rgba(255,255,255,0.05);
-            font-size: 14px;
-        }
-
-        .data-item span:first-child {
-            color: var(--text-muted);
-        }
-
-        .data-item span:last-child {
-            font-family: monospace;
-            font-weight: bold;
-            font-size: 15px;
-        }
-
-        .value-alert {
-            color: var(--alert-red);
-        }
-
-        /* Botón Neón */
-        .btn-action {
-            background: transparent;
-            color: var(--neon-blue);
-            border: 2px solid var(--neon-blue);
-            padding: 14px;
-            font-size: 15px;
-            font-weight: 700;
-            border-radius: 6px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            margin-top: auto;
-            text-align: center;
-        }
-
-        .btn-action:hover {
-            background-color: var(--neon-blue);
-            color: var(--bg-dark);
-            box-shadow: var(--neon-glow);
-        }
-
-        /* Visor Central (Espacio 3D) */
-        .workspace-viewer {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .screen-3d {
-            background-color: #050811;
-            border: 2px solid #1e293b;
-            border-radius: 12px;
-            height: 450px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Rejilla técnica de fondo de ingeniería */
-        .screen-3d::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 210, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 210, 255, 0.03) 1px, transparent 1px);
-            background-size: 20px 20px;
-            pointer-events: none;
-        }
-
-        .placeholder-3d-graphic {
-            text-align: center;
-            z-index: 2;
-        }
-
-        .gearbox-svg {
-            width: 120px;
-            height: 120px;
-            fill: none;
-            stroke: var(--neon-blue);
-            stroke-width: 1.5;
-            margin-bottom: 15px;
-            filter: drop-shadow(var(--neon-glow));
-        }
-
-        .rotating {
-            animation: gearRotate 8s linear infinite;
-        }
-
-        @keyframes gearRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .console-log {
-            background-color: #020617;
-            border-radius: 8px;
-            padding: 15px;
-            font-family: monospace;
-            font-size: 13px;
-            color: var(--neon-green);
-            height: 100px;
-            overflow-y: auto;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        /* Barra de progreso de escaneo simulado */
-        .progress-bar-container {
-            width: 100%;
-            background-color: #1e293b;
-            height: 6px;
-            border-radius: 3px;
-            margin-top: 10px;
-            display: none;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background-color: var(--neon-blue);
-            width: 0%;
-            box-shadow: var(--neon-glow);
-            transition: width 0.1s linear;
-        }
-    </style>
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 60px; left: 0; right: 0; background: rgba(6,13,31,0.98); border-bottom: 1px solid var(--border); padding: 1rem; gap: 4px; }
+      .nav-links.open { display: flex; }
+      .hamburger { display: block; }
+      .hero { flex-direction: column; padding: 2rem 1.2rem; min-height: auto; padding-bottom: 3rem; }
+      .hero-content { max-width: 100%; }
+      .hero-visual { position: static; transform: none; width: 200px; height: 200px; margin: 2rem auto 0; }
+      .hero h1 { font-size: 28px; }
+      .info-grid { grid-template-columns: 1fr; }
+      .maint-types { grid-template-columns: 1fr; }
+      .lab-container { grid-template-columns: 1fr; }
+      .contact-wrap { grid-template-columns: 1fr; }
+      .hero-stats { gap: 1.2rem; }
+      .section-content { padding: 1.5rem 1rem; }
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">CRISTOLAB <span class="version">2.0</span></div>
-        <nav>
-            <ul class="nav-links">
-                <li><a id="tab-inicio" class="active-tab" onclick="switchTab('inicio')">Inicio</a></li>
-                <li><a id="tab-informacion" onclick="switchTab('informacion')">Información</a></li>
-                <li><a id="tab-laboratorio" onclick="switchTab('laboratorio')">Laboratorio 3D</a></li>
-            </ul>
-        </nav>
-    </header>
+  <nav>
+    <div class="logo">CRIST<span>O</span>LAB<small>2.0</small></div>
+    <div class="nav-links" id="navLinks">
+      <button class="nav-btn active" onclick="showSection('inicio',this)">Inicio</button>
+      <button class="nav-btn" onclick="showSection('info',this)">Información</button>
+      <button class="nav-btn" onclick="showSection('lab',this)">Laboratorio</button>
+      <button class="nav-btn" onclick="showSection('proc',this)">Procedimientos</button>
+      <button class="nav-btn" onclick="showSection('recursos',this)">Recursos</button>
+      <button class="nav-btn" onclick="showSection('contacto',this)">Contacto</button>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menú">☰</button>
+  </nav>
 
-    <main>
-        
-        <section id="section-inicio" class="content-section active">
-            <div class="hero">
-                <div class="hero-text">
-                    <h1>Mantenimiento Industrial <br><span>Virtualizado</span></h1>
-                    <p>Experimenta con entornos operativos complejos de manera segura. CRISTOLAB 2.0 permite el análisis predictivo de fallas estructurales y mecánicas sin poner en riesgo activos físicos reales.</p>
-                    <button class="btn-action" style="width: auto; padding: 14px 28px;" onclick="switchTab('laboratorio')">Ingresar al Laboratorio</button>
-                </div>
-                <div class="hero-image">
-                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80" alt="Mantenimiento Industrial Avanzado">
-                </div>
-            </div>
-        </section>
+  <!-- INICIO -->
+  <div id="inicio" class="section visible">
+    <div class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-grid"></div>
+      <div class="hero-content">
+        <div class="hero-tag">⚙ Laboratorio Virtual Industrial</div>
+        <h1>Bienvenido a<br><span class="accent">CRISTOLAB 2.0</span></h1>
+        <p>Plataforma interactiva de mantenimiento industrial con simulaciones 3D, análisis de materiales metálicos y procedimientos técnicos certificados bajo normas internacionales.</p>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="showSection('lab',document.querySelectorAll('.nav-btn')[2])">Explorar Laboratorio</button>
+          <button class="btn-secondary" onclick="showSection('info',document.querySelectorAll('.nav-btn')[1])">Ver Información</button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><div class="stat-num">12+</div><div class="stat-label">Módulos</div></div>
+          <div class="stat-divider"></div>
+          <div class="stat"><div class="stat-num">3D</div><div class="stat-label">Visualización</div></div>
+          <div class="stat-divider"></div>
+          <div class="stat"><div class="stat-num">ISO</div><div class="stat-label">Certificado</div></div>
+          <div class="stat-divider"></div>
+          <div class="stat"><div class="stat-num">5</div><div class="stat-label">Metales</div></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <svg class="gear-svg" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="140" cy="140" r="128" fill="none" stroke="rgba(0,194,255,0.06)" stroke-width="1"/>
+          <circle cx="140" cy="140" r="118" fill="none" stroke="rgba(0,194,255,0.10)" stroke-width="0.5"/>
+          <g class="gear-ring-anim">
+            <circle cx="140" cy="140" r="100" fill="none" stroke="rgba(0,194,255,0.18)" stroke-width="2" stroke-dasharray="8 6"/>
+            <polygon points="140,38 146,52 134,52" fill="rgba(0,194,255,0.55)"/>
+            <polygon points="140,242 146,228 134,228" fill="rgba(0,194,255,0.55)"/>
+            <polygon points="38,140 52,146 52,134" fill="rgba(0,194,255,0.55)"/>
+            <polygon points="242,140 228,146 228,134" fill="rgba(0,194,255,0.55)"/>
+          </g>
+          <g class="gear-ring-anim2">
+            <circle cx="140" cy="140" r="70" fill="none" stroke="rgba(0,255,209,0.18)" stroke-width="1.5" stroke-dasharray="5 8"/>
+          </g>
+          <circle cx="140" cy="140" r="52" fill="rgba(6,13,31,0.85)" stroke="rgba(0,194,255,0.45)" stroke-width="2"/>
+          <circle cx="140" cy="140" r="44" fill="rgba(13,26,53,0.9)" stroke="rgba(0,194,255,0.25)" stroke-width="1"/>
+          <line x1="140" y1="98" x2="140" y2="182" stroke="rgba(0,194,255,0.25)" stroke-width="1.5"/>
+          <line x1="98" y1="140" x2="182" y2="140" stroke="rgba(0,194,255,0.25)" stroke-width="1.5"/>
+          <line x1="111" y1="111" x2="169" y2="169" stroke="rgba(0,194,255,0.15)" stroke-width="1"/>
+          <line x1="169" y1="111" x2="111" y2="169" stroke="rgba(0,194,255,0.15)" stroke-width="1"/>
+          <path d="M140,55 L147,70 L133,70 Z" fill="rgba(0,194,255,0.6)"/>
+          <path d="M140,225 L147,210 L133,210 Z" fill="rgba(0,194,255,0.6)"/>
+          <path d="M55,140 L70,147 L70,133 Z" fill="rgba(0,194,255,0.6)"/>
+          <path d="M225,140 L210,147 L210,133 Z" fill="rgba(0,194,255,0.6)"/>
+          <circle cx="140" cy="140" r="18" fill="rgba(0,194,255,0.12)" stroke="rgba(0,194,255,0.55)" stroke-width="2"/>
+          <circle cx="140" cy="140" r="10" fill="rgba(0,194,255,0.28)" stroke="rgba(0,255,209,0.5)" stroke-width="1.5"/>
+          <circle cx="140" cy="140" r="4" fill="#00FFD1"/>
+          <circle class="dp1" cx="140" cy="28" r="3.5" fill="#00C2FF"/>
+          <circle class="dp2" cx="252" cy="140" r="2.5" fill="#00FFD1"/>
+          <circle class="dp3" cx="44" cy="204" r="2" fill="#00C2FF"/>
+          <text x="153" y="108" font-size="8" fill="rgba(0,255,209,0.7)" font-family="monospace">RPM</text>
+          <text x="153" y="119" font-size="9" fill="rgba(0,255,209,0.9)" font-family="monospace" font-weight="bold">1450</text>
+          <text x="95" y="168" font-size="8" fill="rgba(0,194,255,0.7)" font-family="monospace">TEMP</text>
+          <text x="92" y="179" font-size="9" fill="rgba(0,194,255,0.9)" font-family="monospace" font-weight="bold">72°C</text>
+        </svg>
+      </div>
+    </div>
+    <div class="hero-modules">
+      <div style="max-width:1200px;margin:0 auto">
+        <div class="sec-header">
+          <div class="sec-tag">Módulos Disponibles</div>
+          <div class="sec-title">¿Qué puedes aprender?</div>
+          <div class="sec-sub">Accede a simulaciones, materiales y procedimientos de mantenimiento industrial</div>
+        </div>
+        <div class="cards-grid">
+          <div class="card" onclick="showSection('lab',document.querySelectorAll('.nav-btn')[2])">
+            <div class="card-icon"><i class="ti ti-flask" aria-hidden="true"></i></div>
+            <h3>Laboratorio 3D</h3>
+            <p>Visualiza y analiza metales industriales con modelos interactivos. Rota, haz zoom y explora propiedades de cada material.</p>
+            <span class="badge badge-cyan">3D Interactivo</span>
+          </div>
+          <div class="card" onclick="showSection('proc',document.querySelectorAll('.nav-btn')[3])">
+            <div class="card-icon"><i class="ti ti-settings" aria-hidden="true"></i></div>
+            <h3>Procedimientos</h3>
+            <p>Guías paso a paso para mantenimiento preventivo, correctivo y predictivo de equipos industriales certificados.</p>
+            <span class="badge badge-teal">Guías Técnicas</span>
+          </div>
+          <div class="card" onclick="showSection('info',document.querySelectorAll('.nav-btn')[1])">
+            <div class="card-icon"><i class="ti ti-book" aria-hidden="true"></i></div>
+            <h3>Base de Conocimiento</h3>
+            <p>Teoría, normativas ISO y fundamentos del mantenimiento industrial moderno aplicados al entorno profesional.</p>
+            <span class="badge badge-cyan">ISO 9001</span>
+          </div>
+          <div class="card" onclick="showSection('recursos',document.querySelectorAll('.nav-btn')[4])">
+            <div class="card-icon"><i class="ti ti-download" aria-hidden="true"></i></div>
+            <h3>Recursos</h3>
+            <p>Fichas técnicas, manuales, calculadoras y plantillas de inspección para uso profesional en campo.</p>
+            <span class="badge badge-teal">Descargable</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        <section id="section-informacion" class="content-section">
-            <h2 style="font-size: 28px; margin-bottom: 10px;">Información Técnica General</h2>
-            <p style="color: var(--text-muted); margin-bottom: 30px;">Especificaciones de los módulos formativos incluidos en la plataforma de simulación.</p>
-            
-            <div class="info-grid">
-                <div class="info-card">
-                    <h3>Análisis Vibracional</h3>
-                    <p>Monitoreo de severidad global según normativas internacionales ISO 10816 para la detección temprana de desalineación, desbalance y holguras mecánicas.</p>
-                </div>
-                <div class="info-card">
-                    <h3>Tribología y Lubricación</h3>
-                    <p>Estudio virtual de la degradación del lubricante en reductores de velocidad, análisis de partículas de desgaste y control de temperatura crítica.</p>
-                </div>
-                <div class="info-card">
-                    <h3>Componentes Interactivos</h3>
-                    <p>Modelado geométrico y análisis cinemático de trenes de engranajes epicicloidales y helicoidales bajo condiciones variables de torque.</p>
-                </div>
-            </div>
-        </section>
+  <!-- INFORMACIÓN -->
+  <div id="info" class="section">
+    <div class="section-content">
+      <div class="sec-header">
+        <div class="sec-tag">Base de Conocimiento</div>
+        <div class="sec-title">Mantenimiento Industrial</div>
+        <div class="sec-sub">Fundamentos teóricos y normativos del mantenimiento industrial moderno</div>
+      </div>
+      <div class="info-grid">
+        <div class="info-block">
+          <h3><i class="ti ti-info-circle" aria-hidden="true"></i> ¿Qué es CRISTOLAB 2.0?</h3>
+          <p>CRISTOLAB 2.0 es una plataforma educativa de mantenimiento industrial que combina teoría, simulación 3D y procedimientos técnicos certificados. Diseñada para ingenieros, técnicos y estudiantes del área industrial.</p>
+        </div>
+        <div class="info-block">
+          <h3><i class="ti ti-target" aria-hidden="true"></i> Objetivos del Laboratorio</h3>
+          <p>Desarrollar competencias técnicas en análisis de materiales, diagnóstico de fallas, planificación de mantenimiento y uso correcto de herramientas industriales bajo estándares internacionales ISO.</p>
+        </div>
+      </div>
+      <div class="info-block">
+        <h3><i class="ti ti-layers" aria-hidden="true"></i> Tipos de Mantenimiento Industrial</h3>
+        <div class="maint-types">
+          <div class="mtype">
+            <div class="mtype-label" style="color:var(--cyan)">PREVENTIVO</div>
+            <p>Intervenciones programadas para evitar fallas. Incluye inspecciones periódicas, lubricación, calibración y reemplazo de componentes según vida útil estimada.</p>
+          </div>
+          <div class="mtype">
+            <div class="mtype-label" style="color:var(--teal)">CORRECTIVO</div>
+            <p>Reparación de equipos tras una falla. Distingue entre correctivo planificado (diferido) y no planificado (urgente) según el impacto en la producción.</p>
+          </div>
+          <div class="mtype">
+            <div class="mtype-label" style="color:#A78BFA">PREDICTIVO</div>
+            <p>Monitoreo continuo mediante vibración, temperatura y análisis de aceite para predecir y prevenir fallas antes de que afecten la producción.</p>
+          </div>
+        </div>
+      </div>
+      <div class="info-block">
+        <h3><i class="ti ti-list-check" aria-hidden="true"></i> Proceso de Diagnóstico Industrial</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Inspección Visual</strong>Revisión exterior para detectar fugas, corrosión, desgaste físico, daños en sellos o signos de sobrecalentamiento.</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Medición y Análisis</strong>Uso de termómetros IR, vibrómetros, multímetros, manómetros y analizadores espectrales para obtener datos objetivos.</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Diagnóstico de Falla</strong>Identificación de la causa raíz comparando con parámetros de diseño, históricos y tolerancias del fabricante.</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Intervención y Reparación</strong>Ejecución del mantenimiento siguiendo procedimientos normalizados y aplicando LOTO (bloqueo/etiquetado) de seguridad.</div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-text"><strong>Verificación y Documentación</strong>Pruebas post-intervención y registro detallado en bitácora para trazabilidad y auditoría futura.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        <section id="section-laboratorio" class="content-section">
-            <h2 style="font-size: 28px; margin-bottom: 5px;">Módulo de Diagnóstico: Gearbox 2</h2>
-            <p style="color: var(--text-muted); margin-bottom: 25px;">Monitoreo analítico de caja reductora industrial de doble etapa (Caso Maestro).</p>
-            
-            <div class="lab-layout">
-                
-                <div class="telemetry-panel">
-                    <div class="panel-title">
-                        <span>Telemetría Remota</span>
-                        <span id="sys-status" class="status-indicator"></span>
-                    </div>
-                    
-                    <div class="data-list">
-                        <div class="data-item">
-                            <span>ID de Activo:</span>
-                            <span>GBX-002-MH</span>
-                        </div>
-                        <div class="data-item">
-                            <span>Velocidad Entrada:</span>
-                            <span id="val-rpm">1450 RPM</span>
-                        </div>
-                        <div class="data-item">
-                            <span>Temperatura Aceite:</span>
-                            <span id="val-temp" class="value-alert">85.4 °C</span>
-                        </div>
-                        <div class="data-item">
-                            <span>Vibración global:</span>
-                            <span id="val-vib">4.2 mm/s</span>
-                        </div>
-                        <div class="data-item">
-                            <span>Frecuencia de Engrane:</span>
-                            <span>241.6 Hz</span>
-                        </div>
-                    </div>
+  <!-- LABORATORIO -->
+  <div id="lab" class="section">
+    <div class="section-content">
+      <div class="sec-header">
+        <div class="sec-tag">Simulación 3D Interactiva</div>
+        <div class="sec-title">Laboratorio de Materiales</div>
+        <div class="sec-sub">Selecciona un metal para explorar sus propiedades. Arrastra para rotar · Scroll para zoom.</div>
+      </div>
+      <div class="metal-selector" id="metalSelector"></div>
+      <div class="lab-container">
+        <div class="metal-viewer">
+          <h3>⬡ Visualizador 3D — <span id="metalSymbolHeader">Fe-C</span></h3>
+          <div class="canvas-wrap" id="canvasWrap">
+            <canvas id="metalCanvas"></canvas>
+          </div>
+          <div class="canvas-hint">
+            <span>← Arrastra para rotar · Scroll para zoom →</span>
+            <span id="rotLabel">Rotando...</span>
+          </div>
+        </div>
+        <div class="metal-viewer">
+          <h3>⬡ Propiedades del Material</h3>
+          <div id="metalInfo"></div>
+        </div>
+      </div>
+      <div class="sec-header" style="margin-top:2rem">
+        <div class="sec-tag">Equipos del Laboratorio</div>
+        <div class="sec-title" style="font-size:20px">Herramientas y Equipos</div>
+        <div class="sec-sub">Instrumentos utilizados en diagnóstico y mantenimiento industrial</div>
+      </div>
+      <div class="tools-grid">
+        <div class="tool-card"><div class="tool-emoji">🔩</div><div class="tool-name">Torno Industrial</div><div class="tool-use">Mecanizado de piezas</div></div>
+        <div class="tool-card"><div class="tool-emoji">🔧</div><div class="tool-name">Llave de Torque</div><div class="tool-use">Apriete calibrado</div></div>
+        <div class="tool-card"><div class="tool-emoji">📏</div><div class="tool-name">Micrómetro</div><div class="tool-use">Medición de precisión</div></div>
+        <div class="tool-card"><div class="tool-emoji">🌡️</div><div class="tool-name">Termómetro IR</div><div class="tool-use">Temperatura sin contacto</div></div>
+        <div class="tool-card"><div class="tool-emoji">⚡</div><div class="tool-name">Multímetro</div><div class="tool-use">Diagnóstico eléctrico</div></div>
+        <div class="tool-card"><div class="tool-emoji">🔬</div><div class="tool-name">Microscopio Metalúrgico</div><div class="tool-use">Análisis microestructural</div></div>
+        <div class="tool-card"><div class="tool-emoji">📡</div><div class="tool-name">Vibrómetro</div><div class="tool-use">Análisis de vibraciones</div></div>
+        <div class="tool-card"><div class="tool-emoji">🛢️</div><div class="tool-name">Analizador de Aceite</div><div class="tool-use">Tribología industrial</div></div>
+      </div>
+    </div>
+  </div>
 
-                    <button id="btn-scan" class="btn-action" onclick="runDiagnosticSequence()">Iniciar Análisis Dinámico</button>
-                    
-                    <div class="progress-bar-container" id="progress-container">
-                        <div class="progress-bar-fill" id="progress-fill"></div>
-                    </div>
-                </div>
+  <!-- PROCEDIMIENTOS -->
+  <div id="proc" class="section">
+    <div class="section-content">
+      <div class="sec-header">
+        <div class="sec-tag">Guías Técnicas Certificadas</div>
+        <div class="sec-title">Procedimientos de Mantenimiento</div>
+        <div class="sec-sub">Protocolos normalizados para intervención industrial segura y eficiente</div>
+      </div>
+      <div class="proc-list">
+        <div class="proc-item">
+          <div class="proc-num">01</div>
+          <div class="proc-body">
+            <h4>Mantenimiento de Rodamientos</h4>
+            <p>Inspección, lubricación y sustitución de rodamientos de bolas y rodillos. Verificación de holguras axiales y radiales, análisis de vibración espectral y criterios de reemplazo según horas de operación.</p>
+            <div class="proc-tags"><span class="proc-tag">Lubricación</span><span class="proc-tag">Medición</span><span class="proc-tag">ISO 281</span><span class="proc-tag">Predictivo</span></div>
+          </div>
+        </div>
+        <div class="proc-item">
+          <div class="proc-num">02</div>
+          <div class="proc-body">
+            <h4>Alineación de Ejes y Acoplamientos</h4>
+            <p>Procedimiento de alineación láser y con comparador de carátula para acoplamientos flexibles y rígidos. Control de paralelismo, angularidad y centralización para minimizar vibración y desgaste prematuro.</p>
+            <div class="proc-tags"><span class="proc-tag">Alineación</span><span class="proc-tag">Láser</span><span class="proc-tag">Precisión</span><span class="proc-tag">Preventivo</span></div>
+          </div>
+        </div>
+        <div class="proc-item">
+          <div class="proc-num">03</div>
+          <div class="proc-body">
+            <h4>Balanceo Dinámico de Rotores</h4>
+            <p>Técnica de balanceo en campo usando analizador espectral. Corrección de desequilibrio estático y dinámico mediante masas de corrección en uno o dos planos según el tipo de rotor y clase de balance requerida.</p>
+            <div class="proc-tags"><span class="proc-tag">Vibración</span><span class="proc-tag">Balance</span><span class="proc-tag">ISO 1940</span><span class="proc-tag">Predictivo</span></div>
+          </div>
+        </div>
+        <div class="proc-item">
+          <div class="proc-num">04</div>
+          <div class="proc-body">
+            <h4>Inspección Termográfica</h4>
+            <p>Uso de cámara termográfica para detección de puntos calientes en instalaciones eléctricas, motores y transformadores sin detener la producción. Clasificación de anomalías por nivel de severidad térmica.</p>
+            <div class="proc-tags"><span class="proc-tag">Termografía</span><span class="proc-tag">Predictivo</span><span class="proc-tag">Sin parada</span><span class="proc-tag">Eléctrico</span></div>
+          </div>
+        </div>
+        <div class="proc-item">
+          <div class="proc-num">05</div>
+          <div class="proc-body">
+            <h4>Análisis de Aceites Lubricantes</h4>
+            <p>Extracción y análisis de muestras para determinar contaminación, degradación, viscosidad, presencia de agua y partículas metálicas indicativas de desgaste de componentes internos de la maquinaria.</p>
+            <div class="proc-tags"><span class="proc-tag">Tribología</span><span class="proc-tag">Análisis</span><span class="proc-tag">Espectroscopia</span><span class="proc-tag">Predictivo</span></div>
+          </div>
+        </div>
+        <div class="proc-item">
+          <div class="proc-num">06</div>
+          <div class="proc-body">
+            <h4>Soldadura y Reparación de Estructuras</h4>
+            <p>Técnicas MIG, TIG y electródica para reparación de estructuras metálicas. Preparación de juntas, control de aporte de calor, precalentamiento y pruebas de integridad post-soldadura según AWS D1.1.</p>
+            <div class="proc-tags"><span class="proc-tag">Soldadura</span><span class="proc-tag">MIG/TIG</span><span class="proc-tag">AWS D1.1</span><span class="proc-tag">Correctivo</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-                <div class="workspace-viewer">
-                    <div class="screen-3d">
-                        <div class="placeholder-3d-graphic">
-                            <svg class="gearbox-svg rotating" id="gear-mesh" viewBox="0 0 24 24">
-                                <path d="M19.44 12.99l-.01-.02c.04-.33.08-.67.08-1.01 0-.34-.03-.66-.07-.99l.01-.02 2.44-1.92-2.43-4.22-2.87 1.16-.01-.01c-.52-.4-1.09-.73-1.71-.97l-.01-.01L14.4 2H9.55l-.46 3.01-.01.01c-.62.24-1.19.57-1.71.97l-.01.01-2.86-1.16-2.44 4.22 2.44 1.92.01.02c-.04.33-.07.65-.07.99 0 .34.03.68.08 1.01l-.01.02-2.44 1.92 2.44 4.22 2.87-1.16.01.01c.52.4 1.09.73 1.71.97l.01.01L9.54 22h4.86l.46-3.01.01-.01c.62-.24 1.19-.57 1.71-.97l.01-.01 2.86 1.16 2.44-4.22-2.45-1.92zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
-                            </svg>
-                            <h4 id="viewer-title" style="letter-spacing: 1px; font-weight: 600;">VISOR VIRTUAL: ENTORNO ACTIVO</h4>
-                            <p id="viewer-subtitle" style="color: var(--text-muted); font-size: 13px; margin-top: 5px;">Geometría CAD cargada correctamente. Sistema listo.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="console-log" id="console-output">
-                        CRISTOLAB OS [Versión 2.0.4] <br>
-                        &gt; Sistema inicializado. Monitoreando Gearbox 2 (Reductor de velocidad)...<br>
-                        &gt; ADVERTENCIA: Umbral de temperatura sobrepasado en rodamiento de salida.
-                    </div>
-                </div>
+  <!-- RECURSOS -->
+  <div id="recursos" class="section">
+    <div class="section-content">
+      <div class="sec-header">
+        <div class="sec-tag">Material de Apoyo</div>
+        <div class="sec-title">Recursos Técnicos</div>
+        <div class="sec-sub">Documentación técnica, fichas y herramientas para el profesional del mantenimiento</div>
+      </div>
+      <div class="resources-grid">
+        <div class="res-card">
+          <div class="res-type" style="color:var(--cyan)">📄 Ficha Técnica</div>
+          <div class="res-title">Tabla de Tolerancias ISO</div>
+          <div class="res-desc">Sistema de tolerancias y ajustes para mecanizados industriales según norma ISO 286. Calidades IT y posiciones fundamentales.</div>
+          <button class="res-btn">Acceder al Recurso</button>
+        </div>
+        <div class="res-card">
+          <div class="res-type" style="color:var(--teal)">🎥 Video Tutorial</div>
+          <div class="res-title">Técnicas de Lubricación</div>
+          <div class="res-desc">Selección y aplicación correcta de lubricantes en rodamientos, engranajes y guías lineales de equipos industriales.</div>
+          <button class="res-btn">Ver Video</button>
+        </div>
+        <div class="res-card">
+          <div class="res-type" style="color:#A78BFA">📋 Plantilla</div>
+          <div class="res-title">Plan de Mantenimiento Preventivo</div>
+          <div class="res-desc">Formato editable con frecuencias, responsables, recursos necesarios y registros de ejecución para equipos industriales.</div>
+          <button class="res-btn">Descargar Plantilla</button>
+        </div>
+        <div class="res-card">
+          <div class="res-type" style="color:var(--cyan)">📖 Manual</div>
+          <div class="res-title">Manual de Seguridad Industrial</div>
+          <div class="res-desc">EPP por tarea, procedimiento LOTO, permisos de trabajo en altura y gestión de riesgos industriales normalizados.</div>
+          <button class="res-btn">Leer Manual</button>
+        </div>
+        <div class="res-card">
+          <div class="res-type" style="color:var(--teal)">⚙ Calculadora</div>
+          <div class="res-title">Vida de Rodamientos L10</div>
+          <div class="res-desc">Calcula la vida nominal L10 según carga dinámica equivalente, velocidad de giro y factores de servicio del rodamiento.</div>
+          <button class="res-btn">Usar Calculadora</button>
+        </div>
+        <div class="res-card">
+          <div class="res-type" style="color:#A78BFA">🔎 Norma</div>
+          <div class="res-title">ISO 9001 — Mantenimiento</div>
+          <div class="res-desc">Resumen de la norma ISO 9001:2015 aplicada al sistema de gestión de mantenimiento industrial y sus registros.</div>
+          <button class="res-btn">Ver Resumen</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-            </div>
-        </section>
+  <!-- CONTACTO -->
+  <div id="contacto" class="section">
+    <div class="section-content">
+      <div class="sec-header">
+        <div class="sec-tag">Soporte y Consultas</div>
+        <div class="sec-title">Contáctanos</div>
+        <div class="sec-sub">¿Tienes dudas sobre el laboratorio o necesitas soporte técnico?</div>
+      </div>
+      <div class="contact-wrap">
+        <div class="contact-info">
+          <div class="c-item">
+            <div class="c-icon"><i class="ti ti-mail" aria-hidden="true"></i></div>
+            <div class="c-text"><h4>Correo Electrónico</h4><p>soporte@cristolab.edu</p></div>
+          </div>
+          <div class="c-item">
+            <div class="c-icon"><i class="ti ti-phone" aria-hidden="true"></i></div>
+            <div class="c-text"><h4>Teléfono</h4><p>+593 2 XXX-XXXX</p></div>
+          </div>
+          <div class="c-item">
+            <div class="c-icon"><i class="ti ti-building" aria-hidden="true"></i></div>
+            <div class="c-text"><h4>Institución</h4><p>Laboratorio Virtual Industrial CRISTOLAB</p></div>
+          </div>
+          <div class="c-item">
+            <div class="c-icon"><i class="ti ti-clock" aria-hidden="true"></i></div>
+            <div class="c-text"><h4>Horario de Atención</h4><p>Lunes a Viernes — 8:00 a 18:00</p></div>
+          </div>
+          <div class="lab-note">
+            <div class="lab-note-title">CRISTOLAB 2.0</div>
+            <div class="lab-note-text">Plataforma educativa de mantenimiento industrial comprometida con la formación continua bajo estándares internacionales de calidad.</div>
+          </div>
+        </div>
+        <div class="contact-form">
+          <h3>Enviar Consulta</h3>
+          <div class="form-field"><label>Nombre Completo</label><input type="text" placeholder="Tu nombre completo..."></div>
+          <div class="form-field"><label>Correo Electrónico</label><input type="email" placeholder="tu@email.com"></div>
+          <div class="form-field">
+            <label>Tema</label>
+            <select>
+              <option>Consulta sobre módulos</option>
+              <option>Soporte técnico</option>
+              <option>Sugerencia de mejora</option>
+              <option>Reporte de error</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="form-field"><label>Mensaje</label><textarea placeholder="Describe tu consulta detalladamente..."></textarea></div>
+          <button class="form-send" id="sendBtn" onclick="sendForm()">ENVIAR CONSULTA</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    </main>
+  <footer>
+    <div class="footer-logo">CRISTOLAB 2.0</div>
+    <div class="footer-text">Laboratorio Virtual de Mantenimiento Industrial © 2025</div>
+    <div class="footer-ver">v2.0.1 — ISO 9001 Certified</div>
+  </footer>
 
-    <script>
-        /**
-         * 1. MANEJO DE PESTAÑAS (RUTAS NATIVAS)
-         * Oculta o muestra secciones de la página dinámicamente.
-         */
-        function switchTab(targetSectionId) {
-            // Remover estado activo de todos los enlaces de la navegación
-            const navLinks = document.querySelectorAll('.nav-links a');
-            navLinks.forEach(link => link.classList.remove('active-tab'));
+  <script>
+    /* NAVEGACIÓN */
+    function showSection(id, btn) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(id).classList.add('visible');
+      if (btn) btn.classList.add('active');
+      if (id === 'lab') setTimeout(resizeCanvas, 80);
+      document.getElementById('navLinks').classList.remove('open');
+    }
+    function toggleMenu() { document.getElementById('navLinks').classList.toggle('open'); }
+    function sendForm() {
+      const btn = document.getElementById('sendBtn');
+      btn.textContent = '✓ MENSAJE ENVIADO'; btn.style.background = '#00FFD1'; btn.disabled = true;
+      setTimeout(() => { btn.textContent = 'ENVIAR CONSULTA'; btn.style.background = ''; btn.disabled = false; }, 3000);
+    }
 
-            // Ocultar todas las secciones del cuerpo principal
-            const sections = document.querySelectorAll('.content-section');
-            sections.forEach(section => section.classList.remove('active'));
+    /* DATOS DE METALES */
+    const metals = [
+      { id:'acero', name:'Acero al Carbono', symbol:'Fe-C', color:[180,200,220], shininess:0.9,
+        desc:'Material estructural más utilizado en industria. Aleación de hierro y carbono con excelentes propiedades mecánicas y bajo costo de producción.',
+        props:{'Densidad':'7,850 kg/m³','Dureza':'Brinell 120–200 HB','Resistencia a Tracción':'400–800 MPa','Módulo de Young':'210 GPa','Conductividad Térmica':'50 W/m·K','Punto de Fusión':'1,430–1,530 °C'} },
+      { id:'aluminio', name:'Aluminio 6061', symbol:'Al-6061', color:[200,210,230], shininess:0.95,
+        desc:'Aleación ligera de alta resistencia, excelente maquinabilidad y resistencia a la corrosión. Amplio uso aeronáutico e industrial.',
+        props:{'Densidad':'2,700 kg/m³','Dureza':'Brinell 95 HB','Resistencia a Tracción':'310 MPa','Módulo de Young':'69 GPa','Conductividad Térmica':'167 W/m·K','Punto de Fusión':'582–652 °C'} },
+      { id:'cobre', name:'Cobre C110', symbol:'Cu', color:[200,115,55], shininess:0.85,
+        desc:'Excelente conductor eléctrico y térmico. Base de aleaciones como bronce y latón. Alta ductilidad y resistencia a la corrosión.',
+        props:{'Densidad':'8,940 kg/m³','Dureza':'Brinell 35 HB','Resistencia a Tracción':'220 MPa','Módulo de Young':'120 GPa','Conductividad Térmica':'401 W/m·K','Punto de Fusión':'1,085 °C'} },
+      { id:'inox', name:'Acero Inox. 304', symbol:'AISI 304', color:[188,194,204], shininess:1.0,
+        desc:'Aleación hierro-cromo-níquel con alta resistencia a la corrosión. Estándar en equipos alimentarios, farmacéuticos y arquitectura.',
+        props:{'Densidad':'8,000 kg/m³','Dureza':'Brinell 201 HB','Resistencia a Tracción':'515 MPa','Módulo de Young':'193 GPa','Conductividad Térmica':'16 W/m·K','Punto de Fusión':'1,399–1,454 °C'} },
+      { id:'titanio', name:'Titanio Ti-6Al-4V', symbol:'Ti-64', color:[145,155,175], shininess:0.78,
+        desc:'Mayor relación resistencia/peso entre metales estructurales. Biocompatible, resistente a altas temperaturas y corrosión. Uso aeroespacial.',
+        props:{'Densidad':'4,430 kg/m³','Dureza':'Brinell 334 HB','Resistencia a Tracción':'950 MPa','Módulo de Young':'114 GPa','Conductividad Térmica':'6.7 W/m·K','Punto de Fusión':'1,604–1,660 °C'} }
+    ];
 
-            // Activar la pestaña y sección seleccionada
-            document.getElementById(`tab-${targetSectionId}`).classList.add('active-tab');
-            document.getElementById(`section-${targetSectionId}`).classList.add('active');
-        }
+    let currentMetal = metals[0];
+    let rotX = 0.42, rotY = 0.3, autoRot = true, isDrag = false, lastX = 0, lastY = 0, zoom = 1;
+    const canvas = document.getElementById('metalCanvas');
+    const ctx = canvas.getContext('2d');
 
-        /**
-         * 2. SECUENCIA DE DIAGNÓSTICO INTERACTIVO (SIMULADOR)
-         * Modifica datos mecánicos en tiempo real simulando adquisición de datos por sensores.
-         */
-        function runDiagnosticSequence() {
-            const btn = document.getElementById('btn-scan');
-            const progressContainer = document.getElementById('progress-container');
-            const progressFill = document.getElementById('progress-fill');
-            const consoleBox = document.getElementById('console-output');
-            const gearMesh = document.getElementById('gear-mesh');
+    function resizeCanvas() {
+      const wrap = document.getElementById('canvasWrap');
+      if (!wrap) return;
+      canvas.width = wrap.clientWidth || 400;
+      canvas.height = wrap.clientHeight || 240;
+    }
 
-            // Deshabilitar botón durante el proceso de escaneo técnico
-            btn.disabled = true;
-            btn.style.opacity = '0.5';
-            progressContainer.style.display = 'block';
-            
-            // Actualizar consola técnica
-            consoleBox.innerHTML += `<br>&gt; Iniciando análisis de espectro de frecuencia...`;
-            consoleBox.scrollTop = consoleBox.scrollHeight;
+    function buildSelectors() {
+      const c = document.getElementById('metalSelector');
+      metals.forEach((m, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'metal-btn' + (i === 0 ? ' active' : '');
+        btn.textContent = m.name;
+        btn.onclick = () => {
+          document.querySelectorAll('.metal-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentMetal = m; rotX = 0.42; rotY = 0.3;
+          updateMetalInfo();
+        };
+        c.appendChild(btn);
+      });
+    }
 
-            // Forzar velocidad de rotación visual del engranaje CAD
-            gearMesh.style.animationDuration = '1.5s';
+    function updateMetalInfo() {
+      const m = currentMetal;
+      document.getElementById('metalSymbolHeader').textContent = m.symbol;
+      let html = `<div class="metal-name">${m.name}</div><div class="metal-symbol">${m.symbol}</div><div class="metal-desc">${m.desc}</div>`;
+      for (const [k, v] of Object.entries(m.props)) {
+        html += `<div class="prop-row"><span>${k}</span><span>${v}</span></div>`;
+      }
+      document.getElementById('metalInfo').innerHTML = html;
+    }
 
-            let width = 0;
-            const interval = setInterval(() => {
-                if (width >= 100) {
-                    clearInterval(interval);
-                    
-                    // Finalización del proceso de simulación
-                    btn.disabled = false;
-                    btn.style.opacity = '1';
-                    progressContainer.style.display = 'none';
-                    progressFill.style.width = '0%';
-                    
-                    // Restaurar velocidad de animación normal del componente mecánico
-                    gearMesh.style.animationDuration = '8s';
+    function project(x, y, z) {
+      const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+      const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+      const x2 = x * cosY + z * sinY, z2 = -x * sinY + z * cosY;
+      const y2 = y * cosX - z2 * sinX, z3 = y * sinX + z2 * cosX;
+      const cx = canvas.width / 2, cy = canvas.height / 2 - 10;
+      const scale = zoom * Math.min(canvas.width, canvas.height) * 0.34 * (1 + z3 * 0.18);
+      return { px: cx + x2 * scale, py: cy + y2 * scale, z: z3 };
+    }
 
-                    // Modificar los datos reales del Gearbox tras reparación simulada
-                    executeSimulationFix();
-                } else {
-                    width += 2;
-                    progressFill.style.width = width + '%';
-                }
-            }, 50);
-        }
+    function drawScene() {
+      const w = canvas.width, h = canvas.height;
+      if (!w || !h) return;
+      ctx.clearRect(0, 0, w, h);
+      const m = currentMetal;
+      const R = m.color[0], G = m.color[1], B = m.color[2];
+      const light = { x: 0.58, y: -0.78, z: 0.58 };
+      const lLen = Math.sqrt(light.x**2 + light.y**2 + light.z**2);
 
-        /**
-         * 3. ACTUALIZACIÓN DINÁMICA DE LA TELEMETRÍA DEL CASO MAESTRO
-         */
-        function executeSimulationFix() {
-            const consoleBox = document.getElementById('console-output');
-            
-            // Actualizar etiquetas numéricas del panel
-            document.getElementById('val-temp').innerHTML = "54.2 °C";
-            document.getElementById('val-temp').className = ""; // Retirar alerta visual
-            document.getElementById('val-vib').innerHTML = "1.8 mm/s";
-            document.getElementById('sys-status').className = "status-indicator"; // Verde normal
-            
-            document.getElementById('viewer-title').innerHTML = "DIAGNÓSTICO COMPLETADO: OPERACIÓN OPTIMIZADA";
-            document.getElementById('viewer-subtitle').innerHTML = "Análisis térmico y vibratorio dentro de los límites estables de diseño (ISO 10816).";
+      // Grid
+      ctx.strokeStyle = 'rgba(0,194,255,0.05)'; ctx.lineWidth = 0.5;
+      for (let i = -5; i <= 5; i++) {
+        const t = i / 5;
+        let a = project(t, 0.72, -1), b2 = project(t, 0.72, 1);
+        let c2 = project(-1, 0.72, t), d = project(1, 0.72, t);
+        ctx.beginPath(); ctx.moveTo(a.px, a.py); ctx.lineTo(b2.px, b2.py); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(c2.px, c2.py); ctx.lineTo(d.px, d.py); ctx.stroke();
+      }
 
-            consoleBox.innerHTML += `<br>&gt; Escaneo completado. Óptimo engranamiento detectado.`;
-            consoleBox.innerHTML += `<br>&gt; Filtro cinemático aplicado con éxito. Temperatura normalizada.`;
-            consoleBox.scrollTop = consoleBox.scrollHeight;
-        }
-    </script>
+      const s = 0.6;
+      const verts = [];
+      [-s,s].forEach(xi => [-s,s].forEach(yi => [-s,s].forEach(zi => verts.push(project(xi,yi,zi)))));
+
+      const faces = [
+        { idx:[0,1,3,2], n:[0,0,-1] }, { idx:[4,5,7,6], n:[0,0,1] },
+        { idx:[0,2,6,4], n:[-1,0,0] }, { idx:[1,3,7,5], n:[1,0,0] },
+        { idx:[0,1,5,4], n:[0,-1,0] }, { idx:[2,3,7,6], n:[0,1,0] }
+      ];
+
+      const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+      const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+
+      const faceData = faces.map(f => {
+        const n = f.n;
+        const nx2 = n[0]*cosY + n[2]*sinY, nz2 = -n[0]*sinY + n[2]*cosY;
+        const ny2 = n[1]*cosX - nz2*sinX, nz3 = n[1]*sinX + nz2*cosX;
+        const dot = (nx2*light.x + ny2*light.y + nz3*light.z) / lLen;
+        const bright = 0.18 + 0.68*Math.max(0,dot) + 0.14*m.shininess*Math.max(0,dot)**4;
+        const avgZ = f.idx.reduce((s,i) => s + verts[i].z, 0) / 4;
+        return { ...f, bright, avgZ, vs: f.idx.map(i => verts[i]) };
+      }).sort((a,b) => a.avgZ - b.avgZ);
+
+      faceData.forEach(f => {
+        ctx.beginPath();
+        ctx.moveTo(f.vs[0].px, f.vs[0].py);
+        f.vs.slice(1).forEach(v => ctx.lineTo(v.px, v.py));
+        ctx.closePath();
+        ctx.fillStyle = `rgb(${Math.round(R*f.bright)},${Math.round(G*f.bright)},${Math.round(B*f.bright)})`;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0,194,255,0.22)'; ctx.lineWidth = 0.6; ctx.stroke();
+      });
+
+      // Axes
+      const o = project(0, 0.72, 0);
+      [{ p: project(0.5,0.72,0), c:'rgba(255,80,80,0.6)', l:'X' },
+       { p: project(0,0.22,0), c:'rgba(80,220,80,0.6)', l:'Y' },
+       { p: project(0,0.72,0.5), c:'rgba(80,160,255,0.6)', l:'Z' }].forEach(a => {
+        ctx.strokeStyle = a.c; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(o.px, o.py); ctx.lineTo(a.p.px, a.p.py); ctx.stroke();
+        ctx.fillStyle = a.c; ctx.font = '9px monospace';
+        ctx.fillText(a.l, a.p.px+3, a.p.py-2);
+      });
+
+      // Watermark
+      ctx.fillStyle = 'rgba(0,194,255,0.04)';
+      ctx.font = `bold ${Math.min(w,h)*0.55}px 'Orbitron', monospace`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(m.symbol.substring(0,2), w/2, h/2);
+      ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    }
+
+    let lastTime = 0;
+    function animate(t) {
+      if (autoRot && !isDrag) rotY += 0.009;
+      if (t - lastTime > 15) { drawScene(); lastTime = t; }
+      requestAnimationFrame(animate);
+    }
+
+    canvas.addEventListener('mousedown', e => { isDrag=true; lastX=e.clientX; lastY=e.clientY; autoRot=false; document.getElementById('rotLabel').textContent='Manual'; });
+    canvas.addEventListener('mousemove', e => { if(!isDrag) return; rotY+=(e.clientX-lastX)*0.012; rotX+=(e.clientY-lastY)*0.012; lastX=e.clientX; lastY=e.clientY; });
+    canvas.addEventListener('mouseup', () => { isDrag=false; autoRot=true; document.getElementById('rotLabel').textContent='Rotando...'; });
+    canvas.addEventListener('mouseleave', () => { isDrag=false; autoRot=true; });
+    canvas.addEventListener('wheel', e => { zoom=Math.max(0.4,Math.min(2.4,zoom-e.deltaY*0.001)); e.preventDefault(); }, { passive:false });
+    canvas.addEventListener('touchstart', e => { isDrag=true; lastX=e.touches[0].clientX; lastY=e.touches[0].clientY; autoRot=false; e.preventDefault(); }, { passive:false });
+    canvas.addEventListener('touchmove', e => { if(!isDrag) return; rotY+=(e.touches[0].clientX-lastX)*0.012; rotX+=(e.touches[0].clientY-lastY)*0.012; lastX=e.touches[0].clientX; lastY=e.touches[0].clientY; e.preventDefault(); }, { passive:false });
+    canvas.addEventListener('touchend', () => { isDrag=false; autoRot=true; });
+
+    window.addEventListener('resize', resizeCanvas);
+    buildSelectors();
+    updateMetalInfo();
+    resizeCanvas();
+    requestAnimationFrame(animate);
+  </script>
 </body>
 </html>
