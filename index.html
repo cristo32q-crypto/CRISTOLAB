@@ -701,21 +701,70 @@
 
     /* DATOS DE METALES */
     const metals = [
-      { id:'acero', name:'Acero al Carbono', symbol:'Fe-C', color:[180,200,220], shininess:0.9,
-        desc:'Material estructural más utilizado en industria. Aleación de hierro y carbono con excelentes propiedades mecánicas y bajo costo de producción.',
-        props:{'Densidad':'7,850 kg/m³','Dureza':'Brinell 120–200 HB','Resistencia a Tracción':'400–800 MPa','Módulo de Young':'210 GPa','Conductividad Térmica':'50 W/m·K','Punto de Fusión':'1,430–1,530 °C'} },
-      { id:'aluminio', name:'Aluminio 6061', symbol:'Al-6061', color:[200,210,230], shininess:0.95,
-        desc:'Aleación ligera de alta resistencia, excelente maquinabilidad y resistencia a la corrosión. Amplio uso aeronáutico e industrial.',
-        props:{'Densidad':'2,700 kg/m³','Dureza':'Brinell 95 HB','Resistencia a Tracción':'310 MPa','Módulo de Young':'69 GPa','Conductividad Térmica':'167 W/m·K','Punto de Fusión':'582–652 °C'} },
-      { id:'cobre', name:'Cobre C110', symbol:'Cu', color:[200,115,55], shininess:0.85,
-        desc:'Excelente conductor eléctrico y térmico. Base de aleaciones como bronce y latón. Alta ductilidad y resistencia a la corrosión.',
-        props:{'Densidad':'8,940 kg/m³','Dureza':'Brinell 35 HB','Resistencia a Tracción':'220 MPa','Módulo de Young':'120 GPa','Conductividad Térmica':'401 W/m·K','Punto de Fusión':'1,085 °C'} },
-      { id:'inox', name:'Acero Inox. 304', symbol:'AISI 304', color:[188,194,204], shininess:1.0,
-        desc:'Aleación hierro-cromo-níquel con alta resistencia a la corrosión. Estándar en equipos alimentarios, farmacéuticos y arquitectura.',
-        props:{'Densidad':'8,000 kg/m³','Dureza':'Brinell 201 HB','Resistencia a Tracción':'515 MPa','Módulo de Young':'193 GPa','Conductividad Térmica':'16 W/m·K','Punto de Fusión':'1,399–1,454 °C'} },
-      { id:'titanio', name:'Titanio Ti-6Al-4V', symbol:'Ti-64', color:[145,155,175], shininess:0.78,
-        desc:'Mayor relación resistencia/peso entre metales estructurales. Biocompatible, resistente a altas temperaturas y corrosión. Uso aeroespacial.',
-        props:{'Densidad':'4,430 kg/m³','Dureza':'Brinell 334 HB','Resistencia a Tracción':'950 MPa','Módulo de Young':'114 GPa','Conductividad Térmica':'6.7 W/m·K','Punto de Fusión':'1,604–1,660 °C'} }
+     { 
+    id: 'lss', 
+    name: 'Eje de Baja Velocidad (LSS)', 
+    symbol: 'Low Speed', 
+    color: [0, 136, 255], 
+    shininess: 0.9,
+    desc: 'Eje principal conectado directamente al buje del rotor. Soporta cargas aerodinámicas masivas y transmite el torque inicial de baja velocidad hacia la etapa planetaria.',
+    props: {
+      'Velocidad Nominal': '9 – 19 RPM',
+      'Torque Estimado': '1,200,000 Nm',
+      'Tipo de Rodamiento': 'Rodillos Cónicos Dobles',
+      'Diámetro del Eje': '550 mm',
+      'Material de Fabricación': 'Acero Aleado 42CrMo4',
+      'Estado Crítico': 'Desalineación / Fatiga'
+    }
+  },
+  { 
+    id: 'planetaria', 
+    name: 'Etapa Planetaria', 
+    symbol: 'Planetary', 
+    color: [0, 255, 255], 
+    shininess: 0.95,
+    desc: 'Sistema compuesto por una corona fija, tres planetarios y un piñón sol. Realiza la primera gran multiplicación de velocidad reduciendo drásticamente el torque.',
+    props: {
+      'Relación de Transmisión': '1:5.5',
+      'Número de Planetarios': '3 engranajes',
+      'Tipo de Dientes': 'Helicoidales de alta precisión',
+      'Eficiencia Mecánica': '98.5%',
+      'Dureza Superficial': '58 - 62 HRC',
+      'Fallo Frecuente': 'Pitting (Picadura de dientes)'
+    }
+  },
+  { 
+    id: 'hss', 
+    name: 'Eje de Alta Velocidad (HSS)', 
+    symbol: 'High Speed', 
+    color: [0, 240, 255], 
+    shininess: 1.0,
+    desc: 'Eje encargado de entregar la velocidad final óptima al generador eléctrico. Cuenta con un disco de freno hidráulico acoplado para paradas de emergencia.',
+    props: {
+      'Velocidad Nominal': '1,500 – 1,800 RPM',
+      'Torque Estimado': '8,500 Nm',
+      'Sistema de Freno': 'Freno hidráulico de disco',
+      'Alineación Máxima': '± 0.1 mm Tolerancia',
+      'Tipo de Acoplamiento': 'Flexible de láminas',
+      'Punto de Monitoreo': 'Vibración estructural (Vib)'
+    }
+  },
+  { 
+    id: 'lubricacion', 
+    name: 'Sistema de Lubricación', 
+    symbol: 'Oil Circuit', 
+    color: [0, 85, 255], 
+    shininess: 0.8,
+    desc: 'Circuito crítico encargado de refrigerar y lubricar los engranajes y rodamientos. Filtra las partículas metálicas para evitar el desgaste prematuro de los componentes internos.',
+    props: {
+      'Tipo de Aceite': 'Sintético ISO VG 320 (PAO)',
+      'Presión de Operación': '2.5 – 4.5 bar',
+      'Caudal Nominal': '120 L/min',
+      'Temperatura Crítica': '85 °C (Alarma de parada)',
+      'Filtrado Nominal': '10 micras (Filtro en línea)',
+      'Capacidad del Cárter': '350 Litros'
+    }
+  }
     ];
 
     let currentMetal = metals[0];
