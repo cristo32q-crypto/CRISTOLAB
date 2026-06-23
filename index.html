@@ -864,15 +864,14 @@
       }
       // ===== ESCALADO DINÁMICO PARA COMPONENTES DE LA GEARBOX =====
         let sx = 0.6, sy = 0.6, sz = 0.6; // Tamaños por defecto (Cubo original)
-
         if (m.id === 'lss') {
-            sx = 0.3; sy = 1.3; sz = 0.3;   // Eje robusto y alargado (Baja Velocidad)
+            sx = 0.25; sy = 1.2; sz = 0.25;   // Eje LSS: Ajustado a prisma más esbelto
         } else if (m.id === 'planetaria') {
-            sx = 1.4; sy = 0.2; sz = 1.4;   // Disco ancho y plano (Etapa Planetaria)
+            sx = 1.1; sy = 0.15; sz = 1.1;    // Etapa Planetaria: Mantén esta forma de disco
         } else if (m.id === 'hss') {
-            sx = 0.12; sy = 1.6; sz = 0.12; // Eje muy esbelto y veloz (Alta Velocidad)
+            sx = 0.12; sy = 1.4; sz = 0.12;   // Eje HSS: Ajustado para que se vea más largo
         } else if (m.id === 'lubricacion') {
-            sx = 0.8; sy = 0.5; sz = 0.9;   // Bloque compacto (Sistema de Distribución)
+            sx = 0.6; sy = 0.6; sz = 0.7;     // Sistema de Lubricación: Mantén bloque compacto
         }
         const verts = [];
         // El bucle matemático ahora aplica cada escala a su respectivo eje coordenado
